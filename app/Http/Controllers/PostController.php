@@ -92,12 +92,16 @@ class PostController extends Controller
 
 	public function edit($id) {
 		$dataList = Post::where('posts_track_id', $id)->first();
-		if(Auth::User()->users_track_id == $dataList->posts_users_id) {
-    		$topicList = Topic::all();
-    		return view('post.edit', compact('topicList', 'dataList'))->with('posts_track_id', $id);
-    	} else {
-    		return redirect('posts')->with('error', 'You must Login to update Posts.');
-    	}
+        if(Auth::User()) {
+    		if(Auth::User()->users_track_id == $dataList->posts_users_id) {
+        		$topicList = Topic::all();
+        		return view('post.edit', compact('topicList', 'dataList'))->with('posts_track_id', $id);
+        	} else {
+        		return redirect('posts')->with('error', 'You must Login to update Posts.');
+        	}
+        } else {
+            return redirect()->back()->with('error', 'You must login to edit this post.');
+        }
 	}
 
     /*
@@ -198,13 +202,17 @@ class PostController extends Controller
         $id = $request->input('posts_track_id');
         $post = Post::where('posts_track_id', $id)->first();
         $comment = Comment::where('comments_posts_id', $post->posts_track_id)->first();
-        if(Auth::User()->users_track_id == $post->posts_users_id) {
-            $comment->delete();
-            $post->delete();            
-            return redirect()->back()->with('success', 'Success :) information deleted.');
-            
+        if(Auth::User()) {
+            if(Auth::User()->users_track_id == $post->posts_users_id) {
+                $comment->delete();
+                $post->delete();            
+                return redirect()->back()->with('success', 'Success :) information deleted.');
+                
+            } else {
+                return redirect()->back()->with('error', 'You are not authorize to delete this post.');
+            }
         } else {
-            return redirect()->back()->with('error', 'You are not authorize to delete this post.');
+            return redirect()->back()->with('error', 'You must login to delete this post.');
         }
     }
 

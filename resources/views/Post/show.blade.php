@@ -112,10 +112,62 @@
                                                 <td width="10%">{{ $updatedList }}</td>
 
                                                 <td  width="10%">
-                                                    <a href="{{ (!empty($data->comments_track_id)) ? URL::to('comments/edit/'.$dataList->posts_track_id.'/'.$data->comments_track_id) : '' }}"><button class="btn btn-xs btn-default" type="button" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i> Edit</button></a>
+                                                    <a href="javascript:void(0);" data-toggle="modal" data-target="#edit{{ $data->comments_track_id }}">
+                                                    <button class="btn btn-default btn-sm"><i class="fa fa-edit"></i>&nbsp;Edit</button>
+                                                    </a>
+                                                    
                                                     <a href="javascript:void(0);" data-toggle="modal" data-target="#deleteRow{{ $data->comments_track_id }}">
                                                     <button class="btn btn-default btn-sm"><i class="fa fa-trash"></i>&nbsp;Delete</button>
                                                     </a>
+                                                    <!-- Modal for Edit Comment -->
+                                                    <div id="edit{{ $data->comments_track_id }}" class="modal fade" role="dialog">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                                    <h4 class="modal-title" id="">Edit Comment</h4>
+                                                                </div>
+                                                                <form role="form" method="POST" action="{{ url('/comments/update') }}" enctype="multipart/form-data">
+                                                                  {{ csrf_field() }}
+                                                                  <input type="hidden" name="comments_track_id" value="{{ $data->comments_track_id }}">
+                                                                  <input type="hidden" name="comments_posts_id" value="{{ $data->comments_posts_id }}">
+
+                                                                  <div class="box-body">
+                                                                    <div class="form-group">
+                                                                      <label for="comments_title">Title</label>
+                                                                        <input type="text" class="form-control" name="comments_title" id="comments_title" value="{{ $data->comments_title }}" required>
+                                                                    </div>                
+                                                                  </div>
+
+                                                                  <div class="box-body">
+                                                                    <div class="form-group">
+                                                                      <label for="comments_body">Details</label>
+                                                                        <textarea name="comments_body" id="comments_body" required style="width: 100%; height: 100px;">{!!  $data->comments_body  !!}</textarea>
+                                                                    </div>                
+                                                                  </div>      
+
+                                                                  <div class="box-body">
+                                                                    <div class="form-group">
+                                                                      <label for="comments_picture">Picture</label>
+                                                                        <input type="file" class="form-control" name="comments_picture" id="comments_picture"  >
+                                                                    </div>    
+                                                                    <div>
+                                                                        @if($data->comments_picture != '')
+                                                                        <img id="destinationThumb" style="height: 100px;width: 100px;margin-top: 15px;" class="thumbnail img-responsive" src="{{ asset('upload/comments_picture/'.$data->comments_picture ) }}"/>
+                                                                        @else
+                                                                        <br><span class="label label-danger">No image provided</span><br>
+                                                                        @endif
+                                                                    </div>            
+                                                                  </div>
+                                                                  <!-- /.box-body -->
+
+                                                                  <div class="box-footer">
+                                                                    <button type="submit" class="btn btn-primary"><span class="fa fa-edit"></span> Update</button>
+                                                                  </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                     <div id="deleteRow{{ $data->comments_track_id }}" class="modal fade" role="dialog">
                                                         <div class="modal-dialog modal-sm">
                                                             <div class="modal-content">
