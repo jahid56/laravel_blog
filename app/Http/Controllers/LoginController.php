@@ -12,11 +12,11 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
-class LoginController extends Controller
-{
+class LoginController extends Controller {
+
     use AuthenticatesUsers;
 
-     /**
+    /**
      * Where to redirect users after login.
      *
      * @var string
@@ -53,7 +53,7 @@ class LoginController extends Controller
 
     public function authenticate(Request $request) {
         $credentials = $this->credentials($request);
-        if (Auth::attempt($credentials)) {            
+        if (Auth::attempt($credentials)) {
             return redirect()->intended('/');
         } else {
             return redirect()->intended('login')->with('error', 'Invalid login credentials. Check your email address or username and password!');

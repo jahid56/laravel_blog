@@ -4,8 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Track extends Model
-{
+class Track extends Model {
+
     public function randomNumber($min = 5, $max = 15) {
         $length = rand($min, $max);
         $string = '';
@@ -15,4 +15,5 @@ class Track extends Model
         }
         return $string;
     }
+
 }

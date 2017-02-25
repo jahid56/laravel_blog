@@ -11,31 +11,30 @@ use App\Comment;
 use Illuminate\Support\Facades\File;
 use Auth;
 
-class CommentController extends Controller
-{
-
+class CommentController extends Controller {
     /*
-     This function is used for showing the comment list
-    */
+      This function is used for showing the comment list
+     */
+
     public function create($id) {
-    	if(Auth::User()) {
-    		return view('post.commentAdd')->with('comments_posts_id', $id);
-    	} else {
-    		return redirect()->back()->with('error', 'You must Login to Create Comment.');
-    	}
+        if (Auth::User()) {
+            return view('post.commentAdd')->with('comments_posts_id', $id);
+        } else {
+            return redirect()->back()->with('error', 'You must Login to Create Comment.');
+        }
     }
 
     /*
-     This function is used for storing the comment list
-    */
+      This function is used for storing the comment list
+     */
 
     public function store(Request $request) {
-    	$id = Input::get('comments_posts_id');
-    	if(empty(Input::get('comments_title'))) {
-    		return redirect()->back()->withInput()->with('error', 'Sorry!!! Comment Title Cannot Be Empty');
-    	} else if(empty(Input::get('comments_body'))) {
-    		return redirect()->back()->withInput()->with('error', 'Sorry!!! Comment Body Cannot Be Empty');
-    	} else {
+        $id = Input::get('comments_posts_id');
+        if (empty(Input::get('comments_title'))) {
+            return redirect()->back()->withInput()->with('error', 'Sorry!!! Comment Title Cannot Be Empty');
+        } else if (empty(Input::get('comments_body'))) {
+            return redirect()->back()->withInput()->with('error', 'Sorry!!! Comment Body Cannot Be Empty');
+        } else {
             $randomNumber = new Track;
             $trackId = $randomNumber->randomNumber(5, 10) . "MahMUD" . date('YmdHis');
             $comment = New Comment();
@@ -63,41 +62,41 @@ class CommentController extends Controller
                 $file->move(('upload/comments_picture/'), $rename_img);
             }
             if ($comment->save()) {
-                return redirect('posts/show/'.$id)->with('success', 'Information saved successfully');
+                return redirect('posts/show/' . $id)->with('success', 'Information saved successfully');
             } else {
                 return redirect()->back()->with('error', 'Sorry!!! something went wrong. please try again.');
             }
-	    }
-	}
+        }
+    }
 
     /*
-     This function is used for editing the comment list
-    */
+      This function is used for editing the comment list
+     */
 
-	public function edit($postId, $id) {
-		$dataList = Comment::where('comments_track_id', $id)->first();
-		if(Auth::User()->users_track_id == $dataList->comments_users_id) {
-    		return view('post.commentEdit', compact('topicList', 'dataList'))->with('comments_posts_id', $postId)->with('comments_track_id', $id);
-    	} else {
-    		return redirect()->back()->with('error', 'You are not authorize to edit this comment.');
-    	}
-	}
+    public function edit($postId, $id) {
+        $dataList = Comment::where('comments_track_id', $id)->first();
+        if (Auth::User()->users_track_id == $dataList->comments_users_id) {
+            return view('post.commentEdit', compact('topicList', 'dataList'))->with('comments_posts_id', $postId)->with('comments_track_id', $id);
+        } else {
+            return redirect()->back()->with('error', 'You are not authorize to edit this comment.');
+        }
+    }
 
     /*
-     This function is used for updating the comment list
-    */
+      This function is used for updating the comment list
+     */
 
-	public function update(Request $request) {
-		$comments_track_id = Input::get('comments_track_id');
-		$comments_posts_id = Input::get('comments_posts_id');
+    public function update(Request $request) {
+        $comments_track_id = Input::get('comments_track_id');
+        $comments_posts_id = Input::get('comments_posts_id');
         $dataList = Comment::where('comments_track_id', $comments_track_id)->first();
-        if(Auth::User()) { 
-            if(Auth::User()->users_track_id == $dataList->comments_users_id) {
-            	if(empty(Input::get('comments_title'))) {
-            		return redirect()->back()->withInput()->with('error', 'Sorry!!! Coomment Title Cannot Be Empty');
-            	} else if(empty(Input::get('comments_body'))) {
-            		return redirect()->back()->withInput()->with('error', 'Sorry!!! Comment Body Cannot Be Empty');
-            	} else {
+        if (Auth::User()) {
+            if (Auth::User()->users_track_id == $dataList->comments_users_id) {
+                if (empty(Input::get('comments_title'))) {
+                    return redirect()->back()->withInput()->with('error', 'Sorry!!! Coomment Title Cannot Be Empty');
+                } else if (empty(Input::get('comments_body'))) {
+                    return redirect()->back()->withInput()->with('error', 'Sorry!!! Comment Body Cannot Be Empty');
+                } else {
                     $comment = Comment::where('comments_track_id', $comments_track_id)->first();
                     $comment->comments_title = $request['comments_title'];
                     $comment->comments_body = $request['comments_body'];
@@ -129,37 +128,38 @@ class CommentController extends Controller
                         $rename_img = $comment->comments_picture;
                         $comment->comments_picture = $rename_img;
                     }
-                    
+
                     if ($comment->save()) {
-                        return redirect('posts/show/'.$comments_posts_id)->with('success', 'Information updated successfully');
+                        return redirect('posts/show/' . $comments_posts_id)->with('success', 'Information updated successfully');
                     } else {
                         return redirect()->back()->with('error', 'Sorry!!! something went wrong. please try again.');
                     }
-        	    }
+                }
             } else {
                 return redirect()->back()->with('error', 'You are not authorize to edit this comment.');
             }
-        }else {
+        } else {
             return redirect()->back()->with('error', 'You must login to edit this comment.');
         }
-	}
+    }
 
-	 /*
-     This function is used for deleting the comment list
-    */
+    /*
+      This function is used for deleting the comment list
+     */
 
     public function delete(Request $request) {
         $id = $request->input('comments_track_id');
         $comment = Comment::where('comments_track_id', $id)->first();
-        if(Auth::User()) { 
-            if(Auth::User()->users_track_id == $comment->comments_users_id) {
-    	        $comment->delete();
-    	        return redirect()->back()->with('success', 'Success :) information deleted.');
-    	    } else {
-    	    	return redirect()->back()->with('error', 'You are not authorize to delete this comment.');
-    	    }
+        if (Auth::User()) {
+            if (Auth::User()->users_track_id == $comment->comments_users_id) {
+                $comment->delete();
+                return redirect()->back()->with('success', 'Success :) information deleted.');
+            } else {
+                return redirect()->back()->with('error', 'You are not authorize to delete this comment.');
+            }
         } else {
             return redirect()->back()->with('error', 'You must login to delete this comment.');
         }
-	}
+    }
+
 }

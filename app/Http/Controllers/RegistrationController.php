@@ -8,8 +8,8 @@ use Carbon\Carbon;
 use App\User;
 use App\Track;
 
-class RegistrationController extends Controller
-{
+class RegistrationController extends Controller {
+
     public function register() {
         return view('auth.register');
     }
@@ -28,8 +28,8 @@ class RegistrationController extends Controller
         $checkExistsName = User::where('username', Input::get('username'))->exists();
         if ($checkExistsEmail) {
             return redirect()->back()->withInput()->with('error', 'An user already exists using provided Email Address');
-        } else if($checkExistsName) {
-        	return redirect()->back()->withInput()->with('error', 'An user already exists using provided Username');
+        } else if ($checkExistsName) {
+            return redirect()->back()->withInput()->with('error', 'An user already exists using provided Username');
         } else {
             $errors = array();
             /*
@@ -100,10 +100,11 @@ class RegistrationController extends Controller
                 $obj->created_at = Carbon::now();
                 $obj->users_track_id = $trackId;
                 $obj->save();
-                if($obj->save()) {
-                	return redirect()->back()->with('success', 'Congratulation, your registration completed successfully');
+                if ($obj->save()) {
+                    return redirect()->back()->with('success', 'Congratulation, your registration completed successfully');
                 }
             }
         }
     }
+
 }
